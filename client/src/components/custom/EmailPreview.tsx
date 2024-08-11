@@ -25,8 +25,9 @@ const EmailPreview = () => {
             ) : null}
           </div>
 
-          <div className="flex items-center py-1 text-sm text-neutral-500 w-full">
-            Subject: {emailForm?.subject}
+          <div className="flex items-center gap-2 py-1 text-sm text-neutral-500 w-full">
+            Subject:{' '}
+            <span className="text-neutral-900">{emailForm?.subject}</span>
           </div>
           <div></div>
         </div>

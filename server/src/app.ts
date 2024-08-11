@@ -59,13 +59,18 @@ app.post('/generate', async (req: Request, res: Response) => {
 
   const prompt = `
     You are a helpful email assistant. Create a ${emailType} with a ${tone} tone and with the following format:
-     {{salutation}}
-    {{emailBody}}
-    {{Closing}}
-    {{Signature}}. 
+    [Salutation],
+    [Email Body]
+    [Closing],
+    [Email Signature]. 
     
     Please dont include the subject line on the email body.
-    Stricly follow the above format. dont include text with {{}} in the email body.
+    Stricly follow the above format. 
+    Dont include text with [] in the email body.
+    Remember to use the tone ${tone} in the email.
+    Note that the email body should be a complete sentence.
+    Use the emailContext to provide more context to the email.
+    Please note that you are a helpful email assistant. 
   `;
 
   const userPrompt = `
