@@ -5,11 +5,14 @@ import OpenAI from 'openai';
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-const openai = new OpenAI({ apiKey: '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' });
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // Define routes and middleware here
 
@@ -33,25 +36,61 @@ app.get('/', (req: Request, res: Response) => {
   res.send({ server_response: 'hello express' });
 });
 
-app.post('/parse', async (req: Request, res: Response) => {
-  const { content } = req.body as { content: string };
-  if (!req.body || !req.body.content) {
-    return res.status(400).send('Content field is missing in the request body');
+app.post('/generate', async (req: Request, res: Response) => {
+  // if (!req.body || !req.body.emailType) {
+  //   return res.status(400).send('Email type field is missing in the request body');
+  // }
+  const { emailType, recipient, emailContext, tone } = req.body as {
+    emailType: string;
+    recipient: string;
+    emailContext: string;
+    tone: string;
+  };
+
+  if (
+    !req.body ||
+    !req.body.emailType ||
+    !req.body.recipient ||
+    !req.body.emailContext ||
+    !req.body.tone
+  ) {
+    return res.status(400).send('One or more fields are missing in the request body');
   }
+
+  const prompt = `
+    You are a helpful email assistant. Create a ${emailType} with a ${tone} tone and with the following format:
+     {{salutation}}
+    {{emailBody}}
+    {{Closing}}
+    {{Signature}}. 
+    
+    Please dont include the subject line on the email body.
+    Stricly follow the above format. dont include text with {{}} in the email body.
+  `;
+
+  const userPrompt = `
+    emailType: ${emailType}
+    recipient: ${recipient}
+    emailContext: ${emailContext}
+    tone: ${tone}`;
+
   const completion = await openai.chat.completions.create({
     messages: [
       {
         role: 'system',
-        content: `You are a helpful assistant designed to output JSON. Your output should be like {"category": 'for-sale' | 'for-rent', "type": 'house' | 'apartment' 'condo', "price": number, "location": Object({country: string, region: string, city: string, province: string, other: string, currency: {{currency acronyms avoid e.g PHP, USD, etc}}}) "short_form_description": string, "long_form_description": string, "payment_terms": string }`,
+        content: prompt,
       },
       {
         role: 'user',
-        content: content as string,
+        content: userPrompt,
       },
     ],
-    model: 'gpt-3.5-turbo-1106',
-    response_format: { type: 'json_object' },
+    model: 'gpt-4o-mini-2024-07-18',
   });
 
-  res.send({ response: JSON.parse(completion.choices[0].message.content as string) });
+  if (completion && completion.choices && completion.choices.length > 0) {
+    res.status(200).send({ response: completion.choices[0].message.content, success: true });
+  } else {
+    res.status(500).send({ message: 'Internal Server Error', success: false });
+  }
 });
