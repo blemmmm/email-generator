@@ -12,12 +12,15 @@ import {
   useEmailGenerationService,
 } from '@/lib/emailService';
 import { useFormStore } from '@/lib/zustand/formStore';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
+import { set } from 'zod';
 
 const HomePage = () => {
   const { generateEmail } = useEmailGenerationService();
-  const { mutateAsync: generateEmailMutation } = useMutation(generateEmail);
+  const { mutateAsync: generateEmailMutation, isLoading } =
+    useMutation(generateEmail);
   const { setContent, setEmailForm } = useFormStore();
 
   const form = useForm<EmailGenerationService>({
@@ -31,6 +34,8 @@ const HomePage = () => {
   });
 
   const handleGenerateEmail = async (payload: EmailGenerationService) => {
+    setEmailForm(undefined);
+    setContent('');
     generateEmailMutation(payload, {
       onSuccess: (data: { response: string; success: boolean }) => {
         if (data.success) {
@@ -48,6 +53,14 @@ const HomePage = () => {
     });
   };
 
+  const allFields = form.watch();
+
+  const allFieldsFilled = Object.values(allFields).every(
+    (value) => value !== '',
+  );
+
+  console.log({ allFieldsFilled, allFields });
+
   return (
     <div className="h-screen">
       <ResizablePanelGroup direction="horizontal">
@@ -58,6 +71,7 @@ const HomePage = () => {
           <EmailForm form={form} />
           <Button
             className="w-full"
+            disabled={allFieldsFilled ? false : true}
             onClick={() => handleGenerateEmail(form.getValues())}
           >
             Generate Content
@@ -65,7 +79,7 @@ const HomePage = () => {
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel className="flex flex-col justify-between px-6 py-8 ">
-          <EmailPreview />
+          <EmailPreview isLoading={isLoading} />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

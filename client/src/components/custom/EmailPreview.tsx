@@ -1,18 +1,34 @@
 import { useFormStore } from '@/lib/zustand/formStore';
-import { Button } from '../ui/button';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { ClipboardCopy, SaveIcon, SparklesIcon } from 'lucide-react';
+import { useRef } from 'react';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
+import LoaderText from './loader/LoaderText';
+import { copyText } from '@/lib/utils/copyText';
 
-const EmailPreview = () => {
-  const { content, emailForm } = useFormStore();
-  //   const initialValue = [
-  //     {
-  //       id: '1',
-  //       type: ELEMENT_PARAGRAPH,
-  //       children: [{ text: 'Hello, World!' }, { text: 'This is a test email.' }],
-  //     },
-  //   ];
+interface EmailPreviewProps {
+  isLoading: boolean;
+}
+
+const EmailPreview = ({ isLoading }: EmailPreviewProps) => {
+  const { content, setContent, emailForm } = useFormStore();
+
+  const handleCreateTextFile = (content: string) => {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${emailForm?.subject.replace(/\s/g, '-')}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadEmail = () => {
+    if (content) {
+      handleCreateTextFile(content);
+    }
+  };
 
   return (
     <div className="h-full px-6 overflow-y-auto">
@@ -31,70 +47,58 @@ const EmailPreview = () => {
           </div>
           <div></div>
         </div>
-        <Button className="h-[68px] w-fit">Send</Button>
+        <Button className="h-[68px] w-fit">
+          <a
+            href={`mailto:${emailForm?.recipient}?subject=${encodeURIComponent(emailForm?.subject || '')}&body=${encodeURIComponent(content || '')}`}
+          >
+            Send
+          </a>
+        </Button>
       </div>
 
-      <div className="h-auto my-6 outline-none" contentEditable>
-        {/* <EmailEditor initialValue={initialValue} /> */}
-        <ReactMarkdown
-          children={content}
-          remarkPlugins={[remarkGfm]}
-          components={{
-            h1: ({ children, ...props }) => (
-              <h1
-                className="text-4xl font-extrabold tracking-tight lg:text-5xl"
-                {...props}
-              >
-                {children}
-              </h1>
-            ),
-            h2: ({ children, ...props }) => (
-              <h2
-                className="pb-2 text-[1.25rem] font-semibold tracking-tight first:mt-0"
-                {...props}
-              >
-                {children}
-              </h2>
-            ),
-            h3: ({ children, ...props }) => (
-              <h3 className="text-2xl font-semibold tracking-tight" {...props}>
-                {children}
-              </h3>
-            ),
-            h4: ({ children, ...props }) => (
-              <h4 className="text-xl font-semibold tracking-tight" {...props}>
-                {children}
-              </h4>
-            ),
-            ul: ({ children, ...props }) => (
-              <ul className="list-disc ml-5 mt-1 mb-2" {...props}>
-                {children}
-              </ul>
-            ),
-            ol: ({ children, ...props }) => (
-              <ol className="list-decimal ml-5 mt-1 mb-2" {...props}>
-                {children}
-              </ol>
-            ),
-            blockquote: ({ children, ...props }) => (
-              <blockquote className="mt-6 border-l-2 pl-6 italic" {...props}>
-                {children}
-              </blockquote>
-            ),
-            p: ({ children, ...props }) => (
-              <p
-                className="mb-4 whitespace-pre-line break-words text-sm leading-7"
-                {...props}
-              >
-                {children}
-              </p>
-            ),
-            a: ({ children, ...props }) => {
-              return <a {...props}>{children}</a>;
-            },
-          }}
-        />
-      </div>
+      {emailForm ? (
+        <div className="mt-6">
+          <div className="absolute right-12 flex items-center justify-end gap-2">
+            <Button
+              variant={`outline`}
+              className="p-2 z-50"
+              onClick={() => copyText(content)}
+            >
+              <ClipboardCopy size={18} />
+            </Button>
+            <Button
+              variant={`outline`}
+              className="p-2 z-50"
+              onClick={() => handleDownloadEmail()}
+            >
+              <SaveIcon size={18} />
+            </Button>
+          </div>
+          <Textarea
+            className=" relative h-[76dvh] shadow-none resize-none outline-none focus-visible:ring-0 border-none mb-4 whitespace-pre-line break-words text-sm leading-7"
+            value={content}
+            contentEditable
+            // ref={emailRef}
+            onChange={(e) => setContent(e.target.value)}
+          />
+        </div>
+      ) : (
+        <div className="mt-6 h-[82dvh] bg-neutral-50 rounded-lg flex flex-col items-center justify-center gap-2">
+          {isLoading ? (
+            <div className="loader-container"></div>
+          ) : (
+            <SparklesIcon color="gold" />
+          )}
+
+          <span className="font-semibold text-neutral-400">
+            {isLoading ? (
+              <LoaderText isLoading={isLoading} />
+            ) : (
+              ' Get started by providing your email details'
+            )}
+          </span>
+        </div>
+      )}
     </div>
   );
 };
