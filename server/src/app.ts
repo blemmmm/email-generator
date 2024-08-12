@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import OpenAI from 'openai';
+import path = require('path');
 
 /* eslint-disable import/no-extraneous-dependencies */
 const express = require('express');
@@ -24,9 +25,13 @@ app.use(
   }),
 );
 
-app.use(express.static('../../client/dist/'));
+app.use(express.static(path.join(__dirname, '../../client/dist/')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('*', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+});
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
