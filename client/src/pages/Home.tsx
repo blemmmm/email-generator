@@ -12,10 +12,8 @@ import {
   useEmailGenerationService,
 } from '@/lib/emailService';
 import { useFormStore } from '@/lib/zustand/formStore';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { set } from 'zod';
 
 const HomePage = () => {
   const { generateEmail } = useEmailGenerationService();
