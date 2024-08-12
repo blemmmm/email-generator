@@ -1,11 +1,10 @@
+import { copyText } from '@/lib/utils/copyText';
 import { useFormStore } from '@/lib/zustand/formStore';
 import { ClipboardCopy, SaveIcon, SparklesIcon } from 'lucide-react';
-import { useRef } from 'react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import LoaderText from './loader/LoaderText';
-import { copyText } from '@/lib/utils/copyText';
 
 interface EmailPreviewProps {
   isLoading: boolean;
