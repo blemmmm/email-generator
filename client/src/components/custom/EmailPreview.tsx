@@ -4,19 +4,13 @@ import { ClipboardCopy, SaveIcon, SparklesIcon } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
-import LoaderText from './loader/LoaderText';
 
 interface EmailPreviewProps {
-  isLoading: boolean;
   content: string;
   handleEdit: (updatedContent: string) => void;
 }
 
-const EmailPreview = ({
-  isLoading,
-  content,
-  handleEdit,
-}: EmailPreviewProps) => {
+const EmailPreview = ({ content, handleEdit }: EmailPreviewProps) => {
   const { emailForm } = useFormStore();
 
   const handleCreateTextFile = (content: string) => {
@@ -61,7 +55,7 @@ const EmailPreview = ({
         </Button>
       </div>
 
-      {emailForm ? (
+      {content !== '' ? (
         <div className="mt-6">
           <div className="absolute right-12 flex items-center justify-end gap-2">
             <Button
@@ -90,18 +84,10 @@ const EmailPreview = ({
         </div>
       ) : (
         <div className="mt-6 h-[82dvh] bg-neutral-50 rounded-lg flex flex-col items-center justify-center gap-2">
-          {isLoading ? (
-            <div className="loader-container"></div>
-          ) : (
-            <SparklesIcon color="gold" />
-          )}
+          <SparklesIcon color="gold" />
 
           <span className="font-semibold text-neutral-400">
-            {isLoading ? (
-              <LoaderText isLoading={isLoading} />
-            ) : (
-              ' Get started by providing your email details'
-            )}
+            Get started by providing your email details
           </span>
         </div>
       )}
