@@ -42,7 +42,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send({ server_response: 'hello express' });
 });
 
-app.post('/generate', async (req: Request, res: Response) => {
+app.post('/generate-email', async (req: Request, res: Response) => {
   const { emailType, recipient, emailContext, tone } = req.body as {
     emailType: string;
     recipient: string;
@@ -114,15 +114,128 @@ app.post('/generate', async (req: Request, res: Response) => {
       res.write(`${content}`);
     }
 
+    res.end();
+  } catch (error) {
+    console.error('Error: ', error);
+    res.status(500).send('Something went wrong with the request.');
+  }
+});
+
+app.post('/paraphrase', async (req: Request, res: Response) => {
+  const { tone, text } = req.body as {
+    tone: string;
+    text: string;
+  };
+
+  const prompt = `
+    You are a paraphraser. Paraphrase texts with a ${tone} tone.
+    
+    Remember to use the tone ${tone}.
+    Correct grammatical errors. 
+    Correct spelling errors.
+    Don't include anything that has not mentioned in the text.
+    Please note that you are a paraphraser. 
+  `;
+
+  const userPrompt = `
+    text: ${text}
+    tone: ${tone}`;
+
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: 'system',
+          content: prompt,
+        },
+        {
+          role: 'user',
+          content: userPrompt,
+        },
+      ],
+      model: 'gpt-4o-mini-2024-07-18',
+      stream: true,
+    });
+
+    res.writeHead(200, {
+      Connection: 'keep-alive',
+      'Cache-Control': 'no-cache',
+      'Content-Type': 'text/event-stream',
+      'Access-Control-Allow-Origin': '*',
+    });
+    res.flushHeaders();
+
+    // Handle chunks from the stream
+    for await (const chunk of completion) {
+      const { choices } = chunk;
+      const content = choices[0].delta.content;
+      if (!content) continue;
+      res.write(`${content}`);
+    }
+
     res.end(); // End the stream once done
   } catch (error) {
     console.error('Error: ', error);
     res.status(500).send('Something went wrong with the request.');
   }
+});
 
-  // if (completion && completion.choices && completion.choices.length > 0) {
-  //   res.status(200).send({ response: completion.choices[0].message.content, success: true });
-  // } else {
-  //   res.status(500).send({ message: 'Internal Server Error', success: false });
-  // }
+app.post('/translate', async (req: Request, res: Response) => {
+  const { language, text } = req.body as {
+    language: string;
+    text: string;
+  };
+
+  const prompt = `
+    You are a text translator. Translate texts to the language specified.
+    
+    Remember to use the language ${language} to translate texts.
+    Correct grammatical errors. 
+    Correct spelling errors.
+    Don't include anything that has not mentioned in the text.
+    Don't explain the word, just give its equivalent translation.
+    Please note that you are a text translator. 
+  `;
+
+  const userPrompt = `
+    text: ${text}
+    language: ${language}`;
+
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: 'system',
+          content: prompt,
+        },
+        {
+          role: 'user',
+          content: userPrompt,
+        },
+      ],
+      model: 'gpt-4o-mini-2024-07-18',
+      stream: true,
+    });
+
+    res.writeHead(200, {
+      Connection: 'keep-alive',
+      'Cache-Control': 'no-cache',
+      'Content-Type': 'text/event-stream',
+      'Access-Control-Allow-Origin': '*',
+    });
+    res.flushHeaders();
+
+    // Handle chunks from the stream
+    for await (const chunk of completion) {
+      const { choices } = chunk;
+      const content = choices[0].delta.content;
+      if (!content) continue;
+      res.write(`${content}`);
+    }
+
+    res.end(); // End the stream once done
+  } catch (error) {
+    console.error('Error: ', error);
+    res.status(500).send('Something went wrong with the request.');
+  }
 });

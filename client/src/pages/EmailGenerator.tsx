@@ -6,15 +6,18 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
+import { useSidebar } from '@/components/ui/sidebar';
 import { CONFIG } from '@/lib/config';
 import { EmailGenerationService } from '@/lib/emailService';
 import { ENDPOINTS } from '@/lib/endpoints';
 import { useFormStore } from '@/lib/zustand/formStore';
+import clsx from 'clsx';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 const HomePage = () => {
   const { setEmailForm } = useFormStore();
+  const { state } = useSidebar();
 
   const xhr = new XMLHttpRequest();
 
@@ -55,7 +58,7 @@ const HomePage = () => {
   );
 
   return (
-    <div className="h-screen">
+    <div className="h-[calc(100vh-1rem)]">
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel
           defaultSize={35}
