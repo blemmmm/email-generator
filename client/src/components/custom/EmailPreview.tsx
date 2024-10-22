@@ -8,10 +8,16 @@ import LoaderText from './loader/LoaderText';
 
 interface EmailPreviewProps {
   isLoading: boolean;
+  content: string;
+  handleEdit: (updatedContent: string) => void;
 }
 
-const EmailPreview = ({ isLoading }: EmailPreviewProps) => {
-  const { content, setContent, emailForm } = useFormStore();
+const EmailPreview = ({
+  isLoading,
+  content,
+  handleEdit,
+}: EmailPreviewProps) => {
+  const { emailForm } = useFormStore();
 
   const handleCreateTextFile = (content: string) => {
     const blob = new Blob([content], { type: 'text/plain' });
@@ -78,7 +84,8 @@ const EmailPreview = ({ isLoading }: EmailPreviewProps) => {
             value={content}
             contentEditable
             // ref={emailRef}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={(e) => handleEdit(e.target.value)}
+            suppressContentEditableWarning={true}
           />
         </div>
       ) : (

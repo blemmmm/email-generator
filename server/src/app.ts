@@ -43,9 +43,6 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.post('/generate', async (req: Request, res: Response) => {
-  // if (!req.body || !req.body.emailType) {
-  //   return res.status(400).send('Email type field is missing in the request body');
-  // }
   const { emailType, recipient, emailContext, tone } = req.body as {
     emailType: string;
     recipient: string;
@@ -85,23 +82,47 @@ app.post('/generate', async (req: Request, res: Response) => {
     emailContext: ${emailContext}
     tone: ${tone}`;
 
-  const completion = await openai.chat.completions.create({
-    messages: [
-      {
-        role: 'system',
-        content: prompt,
-      },
-      {
-        role: 'user',
-        content: userPrompt,
-      },
-    ],
-    model: 'gpt-4o-mini-2024-07-18',
-  });
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: 'system',
+          content: prompt,
+        },
+        {
+          role: 'user',
+          content: userPrompt,
+        },
+      ],
+      model: 'gpt-4o-mini-2024-07-18',
+      stream: true,
+    });
 
-  if (completion && completion.choices && completion.choices.length > 0) {
-    res.status(200).send({ response: completion.choices[0].message.content, success: true });
-  } else {
-    res.status(500).send({ message: 'Internal Server Error', success: false });
+    res.writeHead(200, {
+      Connection: 'keep-alive',
+      'Cache-Control': 'no-cache',
+      'Content-Type': 'text/event-stream',
+      'Access-Control-Allow-Origin': '*',
+    });
+    res.flushHeaders();
+
+    // Handle chunks from the stream
+    for await (const chunk of completion) {
+      const { choices } = chunk;
+      const content = choices[0].delta.content;
+      if (!content) continue;
+      res.write(`${content}`);
+    }
+
+    res.end(); // End the stream once done
+  } catch (error) {
+    console.error('Error: ', error);
+    res.status(500).send('Something went wrong with the request.');
   }
+
+  // if (completion && completion.choices && completion.choices.length > 0) {
+  //   res.status(200).send({ response: completion.choices[0].message.content, success: true });
+  // } else {
+  //   res.status(500).send({ message: 'Internal Server Error', success: false });
+  // }
 });

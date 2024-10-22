@@ -7,19 +7,27 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
 import { toast } from '@/components/ui/use-toast';
+import { CONFIG } from '@/lib/config';
 import {
   EmailGenerationService,
   useEmailGenerationService,
 } from '@/lib/emailService';
+import { ENDPOINTS } from '@/lib/endpoints';
 import { useFormStore } from '@/lib/zustand/formStore';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
+import { set } from 'zod';
 
 const HomePage = () => {
   const { generateEmail } = useEmailGenerationService();
-  const { mutateAsync: generateEmailMutation, isLoading } =
-    useMutation(generateEmail);
-  const { setContent, setEmailForm } = useFormStore();
+  const { mutateAsync: generateEmailMutation } = useMutation(generateEmail);
+  const { setEmailForm } = useFormStore();
+
+  const xhr = new XMLHttpRequest();
+
+  const [content, setContent] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<EmailGenerationService>({
     defaultValues: {
@@ -34,21 +42,37 @@ const HomePage = () => {
   const handleGenerateEmail = async (payload: EmailGenerationService) => {
     setEmailForm(undefined);
     setContent('');
-    generateEmailMutation(payload, {
-      onSuccess: (data: { response: string; success: boolean }) => {
-        if (data.success) {
-          setContent(data.response);
-          setEmailForm(payload);
-        }
-      },
-      onError: () => {
-        toast({
-          title: 'Something went wrong',
-          description: 'Please try again later',
-          variant: 'destructive',
-        });
-      },
-    });
+    setIsLoading(true);
+    setEmailForm(payload);
+    // generateEmailMutation(payload, {
+    //   onSuccess: (data: { response: string; success: boolean }) => {
+    //     if (data.success) {
+    //       setContent(data.response);
+    //       setEmailForm(payload);
+    //     }
+    //   },
+    //   onError: () => {
+    //     toast({
+    //       title: 'Something went wrong',
+    //       description: 'Please try again later',
+    //       variant: 'destructive',
+    //     });
+    //   },
+    // });
+    xhr.open('POST', CONFIG.BASE_API_URL + ENDPOINTS.GENERATE_EMAIL, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Cache-Control', 'no-cache');
+    xhr.send(JSON.stringify(payload));
+    xhr.onprogress = () => {
+      setIsLoading(false);
+      // const response = JSON.parse(xhr.responseText);
+      // console.log(xhr.responseText);
+      setContent(xhr.responseText);
+    };
+  };
+
+  const handleEdit = (updatedContent: string) => {
+    setContent(updatedContent);
   };
 
   const allFields = form.watch();
@@ -57,7 +81,9 @@ const HomePage = () => {
     (value) => value !== '',
   );
 
-  console.log({ allFieldsFilled, allFields });
+  useEffect(() => {
+    console.log(content);
+  }, [content]);
 
   return (
     <div className="h-screen">
@@ -77,7 +103,11 @@ const HomePage = () => {
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel className="flex flex-col justify-between px-6 py-8 ">
-          <EmailPreview isLoading={isLoading} />
+          <EmailPreview
+            isLoading={isLoading}
+            content={content}
+            handleEdit={handleEdit}
+          />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
