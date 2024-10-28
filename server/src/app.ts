@@ -19,7 +19,7 @@ const openai = new OpenAI({
 
 app.use(
   cors({
-    origin: 'http://localhost:5173', // Replace with your client's URL
+    origin: 'https://striking-glynnis-i386g-d9d1d1fa.koyeb.app', // Replace with your client's URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Allow cookies and authentication headers
   }),
