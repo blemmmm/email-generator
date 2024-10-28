@@ -6,7 +6,7 @@ WORKDIR /client/
 COPY ["./client/package.json", "./client/package-lock.json", "./"]
 RUN npm install -g typescript
 RUN npm install -g vite
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # server dependencies
 WORKDIR /server/
