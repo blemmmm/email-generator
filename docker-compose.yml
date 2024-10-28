@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  server:
+    build:
+      context: ./ # path of root directory
+      dockerfile: ./docker/Dockerfile # path relative to root directory
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+    networks:
+      - email-generator-network
+networks:
+  email-generator-network:
+    name: email-generator-network
