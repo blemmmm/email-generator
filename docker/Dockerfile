@@ -6,12 +6,12 @@ WORKDIR /client/
 COPY ["./client/package.json", "./client/package-lock.json", "./"]
 RUN npm install -g typescript
 RUN npm install -g vite
-RUN npm install
+RUN npm ci
 
 # server dependencies
 WORKDIR /server/
 COPY ["./server/package.json", "./server/package-lock.json", "./"]
-RUN npm install
+RUN npm ci --omit=dev
 
 # client files
 WORKDIR /client/
