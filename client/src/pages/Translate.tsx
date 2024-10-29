@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -11,11 +10,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Textarea } from '@/components/ui/textarea';
 import { CONFIG } from '@/lib/config';
 import { ENDPOINTS } from '@/lib/endpoints';
-import { copyText } from '@/lib/utils/copyText';
-import { useDebounce } from '@/lib/utils/useDebounce';
-import { Copy, Eraser } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { text } from 'stream/consumers';
 
 type LanguageMap = Record<string, string>;
 

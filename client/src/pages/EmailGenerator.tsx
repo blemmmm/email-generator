@@ -1,11 +1,5 @@
 import EmailForm from '@/components/custom/EmailForm';
 import EmailPreview from '@/components/custom/EmailPreview';
-import { Button } from '@/components/ui/button';
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { CONFIG } from '@/lib/config';
 import { EmailGenerationService } from '@/lib/emailService';
@@ -13,12 +7,11 @@ import { ENDPOINTS } from '@/lib/endpoints';
 import { useFormStore } from '@/lib/zustand/formStore';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMediaQuery } from 'react-responsive';
 
 const HomePage = () => {
   const { setEmailForm } = useFormStore();
   const textRef = useRef<HTMLDivElement>(null);
-  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  // const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
   const xhr = new XMLHttpRequest();
 

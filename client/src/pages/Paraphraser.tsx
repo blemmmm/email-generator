@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { CONFIG } from '@/lib/config';
 import { ENDPOINTS } from '@/lib/endpoints';
 import { copyText } from '@/lib/utils/copyText';
-import { Copy, Eraser, X } from 'lucide-react';
+import { Copy, Eraser } from 'lucide-react';
 import { useState } from 'react';
 
 const TONES = ['Standard', 'Fluent', 'Formal', 'Academic', 'Simple', 'Casual'];

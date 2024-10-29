@@ -14,16 +14,13 @@ import { ROUTES } from '@/router/routes';
 import {
   BookA,
   BotMessageSquare,
-  Calendar,
   CaseLower,
   Languages,
   Mail,
-  Search,
-  Settings,
 } from 'lucide-react';
 
 const AppSidebar = () => {
-  const { setOpen, setOpenMobile, open, openMobile } = useSidebar();
+  const { setOpen, setOpenMobile } = useSidebar();
   const items = [
     {
       title: 'Ask AI',

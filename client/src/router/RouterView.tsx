@@ -2,14 +2,10 @@
 
 import { useRoutes } from 'react-router-dom';
 
-import { config } from './config';
-import { Toaster } from '@/components/ui/toaster';
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
 import AppSidebar from '@/components/custom/AppSidebar/AppSidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { Toaster } from '@/components/ui/toaster';
+import { config } from './config';
 
 export const RouterView = () => {
   const routes = useRoutes(config);
