@@ -4,7 +4,11 @@ import { useRoutes } from 'react-router-dom';
 
 import { config } from './config';
 import { Toaster } from '@/components/ui/toaster';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/components/ui/sidebar';
 import AppSidebar from '@/components/custom/AppSidebar/AppSidebar';
 
 export const RouterView = () => {
@@ -14,6 +18,7 @@ export const RouterView = () => {
     <div>
       <SidebarProvider>
         <AppSidebar />
+
         <SidebarInset>{routes}</SidebarInset>
         <Toaster />
       </SidebarProvider>

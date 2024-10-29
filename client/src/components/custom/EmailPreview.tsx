@@ -8,9 +8,10 @@ import { Textarea } from '../ui/textarea';
 interface EmailPreviewProps {
   content: string;
   handleEdit: (updatedContent: string) => void;
+  textRef: React.RefObject<HTMLDivElement>;
 }
 
-const EmailPreview = ({ content, handleEdit }: EmailPreviewProps) => {
+const EmailPreview = ({ content, handleEdit, textRef }: EmailPreviewProps) => {
   const { emailForm } = useFormStore();
 
   const handleCreateTextFile = (content: string) => {
@@ -30,7 +31,7 @@ const EmailPreview = ({ content, handleEdit }: EmailPreviewProps) => {
   };
 
   return (
-    <div className="h-full px-6">
+    <div className="h-full" ref={textRef}>
       <div className="flex items-center gap-2 justify-between">
         <div className="flex flex-col gap-1  divide-y divide-neutral-300 flex-1">
           <div className="flex items-center gap-2 py-1 text-sm text-neutral-500 w-full">
@@ -77,7 +78,6 @@ const EmailPreview = ({ content, handleEdit }: EmailPreviewProps) => {
             className=" relative h-[76dvh] shadow-none resize-none outline-none focus-visible:ring-0 border-none mb-4 whitespace-pre-line break-words text-sm leading-7"
             value={content}
             contentEditable
-            // ref={emailRef}
             onChange={(e) => handleEdit(e.target.value)}
             suppressContentEditableWarning={true}
           />

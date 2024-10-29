@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Textarea } from '@/components/ui/textarea';
 import { CONFIG } from '@/lib/config';
 import { ENDPOINTS } from '@/lib/endpoints';
@@ -39,7 +40,8 @@ const Paraphraser = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-1rem)] py-8 px-6">
+    <div className="lg:h-[calc(100vh-1rem)] h-full py-8 px-6 relative">
+      <SidebarTrigger className="lg:hidden absolute left-2 top-2 text-neutral-300" />
       <div className="flex flex-col gap-y-4 h-full">
         <h1 className="text-3xl font-bold">Paraphraser</h1>
         <p className="text-muted-foreground">

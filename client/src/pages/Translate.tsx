@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Textarea } from '@/components/ui/textarea';
 import { CONFIG } from '@/lib/config';
 import { ENDPOINTS } from '@/lib/endpoints';
@@ -51,7 +52,8 @@ const Translate = () => {
   }, []);
 
   return (
-    <div className="h-[calc(100vh-1rem)] py-8 px-6">
+    <div className="lg:h-[calc(100vh-1rem)] h-full py-8 px-6 absolute">
+      <SidebarTrigger className="lg:hidden absolute left-2 top-2 text-neutral-300" />
       <div className="flex flex-col gap-y-4 h-full">
         <h1 className="text-3xl font-bold">Translation</h1>
         <p className="text-muted-foreground">
@@ -116,7 +118,7 @@ const Translate = () => {
               className=" relative h-[70dvh] shadow-none resize-none outline-none focus-visible:ring-0 border-none mb-4 whitespace-pre-line break-words text-sm leading-7"
               contentEditable
               suppressContentEditableWarning={true}
-              placeholder="Result"
+              placeholder="Results will appear here"
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />

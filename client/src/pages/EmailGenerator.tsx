@@ -6,18 +6,19 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-import { useSidebar } from '@/components/ui/sidebar';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 import { CONFIG } from '@/lib/config';
 import { EmailGenerationService } from '@/lib/emailService';
 import { ENDPOINTS } from '@/lib/endpoints';
 import { useFormStore } from '@/lib/zustand/formStore';
-import clsx from 'clsx';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useMediaQuery } from 'react-responsive';
 
 const HomePage = () => {
   const { setEmailForm } = useFormStore();
-  const { state } = useSidebar();
+  const textRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
   const xhr = new XMLHttpRequest();
 
@@ -43,6 +44,9 @@ const HomePage = () => {
     xhr.setRequestHeader('Cache-Control', 'no-cache');
     xhr.send(JSON.stringify(payload));
     xhr.onprogress = () => {
+      if (textRef && textRef.current) {
+        textRef.current.scrollTop = textRef.current.scrollHeight;
+      }
       setContent(xhr.responseText);
     };
   };
@@ -51,33 +55,21 @@ const HomePage = () => {
     setContent(updatedContent);
   };
 
-  const allFields = form.watch();
-
-  const allFieldsFilled = Object.values(allFields).every(
-    (value) => value !== '',
-  );
-
   return (
-    <div className="h-[calc(100vh-1rem)]">
-      <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel
-          defaultSize={35}
-          className="flex flex-col justify-between py-8 px-6"
-        >
-          <EmailForm form={form} />
-          <Button
-            className="w-full"
-            disabled={allFieldsFilled ? false : true}
-            onClick={() => handleGenerateEmail(form.getValues())}
-          >
-            Generate Content
-          </Button>
-        </ResizablePanel>
-        <ResizableHandle />
-        <ResizablePanel className="flex flex-col justify-between px-6 py-8 ">
-          <EmailPreview content={content} handleEdit={handleEdit} />
-        </ResizablePanel>
-      </ResizablePanelGroup>
+    <div className="lg:h-[calc(100vh-1rem)] h-full relative">
+      <SidebarTrigger className="lg:hidden absolute left-2 top-2 text-neutral-300" />
+      <div className=" h-full w-full grid grid-cols-1 lg:grid-cols-[320px,auto]">
+        <div className="flex flex-col justify-between py-8 px-6 h-full">
+          <EmailForm form={form} handleGenerateEmail={handleGenerateEmail} />
+        </div>
+        <div className="flex flex-col justify-between px-6 py-8 h-full">
+          <EmailPreview
+            content={content}
+            handleEdit={handleEdit}
+            textRef={textRef}
+          />
+        </div>
+      </div>
     </div>
   );
 };
