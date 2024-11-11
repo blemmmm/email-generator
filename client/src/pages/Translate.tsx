@@ -46,8 +46,10 @@ const Translate = () => {
     }
   }, []);
 
+  console.log(languages);
+
   return (
-    <div className="lg:h-[calc(100vh-1rem)] h-full py-8 px-6 absolute">
+    <div className="lg:h-[calc(100vh-1rem)] h-full py-8 px-6 absolute w-full">
       <SidebarTrigger className="lg:hidden absolute left-2 top-2 text-neutral-300" />
       <div className="flex flex-col gap-y-4 h-full">
         <h1 className="text-3xl font-bold">Translation</h1>
@@ -72,14 +74,14 @@ const Translate = () => {
 
             <Textarea
               placeholder="Enter your text here"
-              className="h-[70dvh]"
+              className="lg:h-[70dvh] h-[25dvh]"
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
           </div>
 
           <div className="flex flex-col gap-2 w-full">
-            <div className="flex items-center justify-start gap-2 w-full">
+            <div className="flex items-center lg:justify-start justify-between gap-2 w-full">
               <Select
                 value={selectedLanguage}
                 onValueChange={setSelectedLanguage}
@@ -96,6 +98,7 @@ const Translate = () => {
                     ))}
                 </SelectContent>
               </Select>
+
               <Button
                 onClick={() => {
                   if (selectedLanguage !== '' && text !== '') {
@@ -110,7 +113,7 @@ const Translate = () => {
               </Button>
             </div>
             <Textarea
-              className=" relative h-[70dvh] shadow-none resize-none outline-none focus-visible:ring-0 border-none mb-4 whitespace-pre-line break-words text-sm leading-7"
+              className=" relative lg:h-[70dvh] h-[25dvh] shadow-none resize-none outline-none focus-visible:ring-0 border-none mb-4 whitespace-pre-line break-words text-sm leading-7"
               contentEditable
               suppressContentEditableWarning={true}
               placeholder="Results will appear here"

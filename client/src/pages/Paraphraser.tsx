@@ -54,7 +54,7 @@ const Paraphraser = () => {
               <div className="flex items-center gap-2">
                 <Label>Tone:</Label>
                 <Select value={tone} onValueChange={setTone}>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="lg:w-[180px] w-[150px]">
                     <SelectValue placeholder="Select Tone" />
                   </SelectTrigger>
                   <SelectContent>
@@ -73,7 +73,7 @@ const Paraphraser = () => {
 
             <Textarea
               placeholder="Enter your text here"
-              className="h-[70dvh]"
+              className="lg:h-[70dvh] h-[25dvh]"
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
@@ -89,10 +89,10 @@ const Paraphraser = () => {
               </Button>
             </div>
             <Textarea
-              className=" relative h-[70dvh] shadow-none resize-none outline-none focus-visible:ring-0 border-none mb-4 whitespace-pre-line break-words text-sm leading-7"
+              className=" relative lg:h-[70dvh] h-[25dvh] shadow-none resize-none outline-none focus-visible:ring-0 border-none mb-4 whitespace-pre-line break-words text-sm leading-7"
               contentEditable
               suppressContentEditableWarning={true}
-              placeholder="Result"
+              placeholder="Results will appear here"
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
